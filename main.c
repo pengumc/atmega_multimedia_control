@@ -24,7 +24,6 @@ uchar keydown = 0;
 uchar prev = 0;
 uchar changed = 0;
 
-
 const PROGMEM char usbHidReportDescriptor[31] = {   /* USB report descriptor */
     0x05, 0x0C, // Usage Page (Consumer Devices)
     0x09, 0x01, // Usage (Consumer Control)
@@ -33,17 +32,17 @@ const PROGMEM char usbHidReportDescriptor[31] = {   /* USB report descriptor */
         0x25, 0x01, //Logical Maximum (1)
         0x09, 0xE9, //Usage (Volume Up)
         0x09, 0xEA, //Usage (Volume Down)
+        0x09, 0xb5, //Usage (scan Next Track)
+        0x09, 0xb6, //Usage (scan Previous Track)
+        0x09, 0xb1, //Usage (pause)
         0x75, 0x01, //Report Size (1)
-        0x95, 0x02, //Report Count (2)
-        0x81, 0x02, //Input (Data, Variable, Absolute)
-//        0x09, 0xE2, //Usage (Mute)
-        0x09, 0xB5, //Usage (scan next track)
-        0x95, 0x01, //Report Count (1)
-        0x81, 0x06, //Input (Data, Variable, Relative)
         0x95, 0x05, //Report Count (5)
+        0x81, 0x02, //Input (Data, Variable, Absolute)
+        0x95, 0x03, //Report Count (3)
         0x81, 0x07, //Input (Constant)
     0xC0 // End Collection
 };
+
 
  
  uchar	usbFunctionSetup(uchar data[8]){
