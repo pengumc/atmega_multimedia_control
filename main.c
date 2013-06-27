@@ -11,18 +11,29 @@
 #include <util/delay.h> 
 #include "usbdrv.h"
 #include "oddebug.h"
+#include "requests.h"
 
 //macros
 #define SET(x,y) (x|=(1<<y))
 #define CLR(x,y) (x&=(~(1<<y)))
 #define CHK(x,y) (x&(1<<y)) 
 #define TOG(x,y) (x^=(1<<y))
+#define VOLUME_UP 0
+#define VOLUME_DOWN 1
+#define NEXT_TRACK 2
+#define PREV_TRACK 3
+#define PAUSE_TRACK 4
+#define MAX_VOLUME 64
 
 static uchar    reportBuffer[1];    /* buffer for HID reports */
 static uchar    idleRate;           /* in 4 ms units */
+static uchar    msgBuffer;
 uchar keydown = 0;
 uchar prev = 0;
 uchar changed = 0;
+uchar adc_result = 0;
+uchar volume = MAX_VOLUME;
+uint16_t normalizer = 0x0000;
 
 const PROGMEM char usbHidReportDescriptor[31] = {   /* USB report descriptor */
     0x05, 0x0C, // Usage Page (Consumer Devices)
@@ -37,7 +48,7 @@ const PROGMEM char usbHidReportDescriptor[31] = {   /* USB report descriptor */
         0x09, 0xb1, //Usage (pause)
         0x75, 0x01, //Report Size (1)
         0x95, 0x05, //Report Count (5)
-        0x81, 0x02, //Input (Data, Variable, Absolute)
+        0x81, 0x06, //Input (Data, Variable, rel)
         0x95, 0x03, //Report Count (3)
         0x81, 0x07, //Input (Constant)
     0xC0 // End Collection
@@ -61,14 +72,18 @@ const PROGMEM char usbHidReportDescriptor[31] = {   /* USB report descriptor */
             idleRate = rq->wValue.bytes[1];
         }
     }else{
-        /* no vendor specific requests implemented */
+        if(rq->bRequest == USBRQ_GET_LAST_ADC_RESULT){
+            msgBuffer = adc_result;
+            usbMsgPtr = &msgBuffer;
+            return 1;
+        }
     }
 	return 0;
 }
 
 
 int main(){
-    reportBuffer[0] = 0x00;//(1<<1);
+    //connect usb
     wdt_enable(WDTO_1S);
     usbInit();
     usbDeviceDisconnect();
@@ -79,36 +94,61 @@ int main(){
     }
     usbDeviceConnect();
     sei();
+    //setup ports, timers, and init variables.
     CLR(DDRB, PB0);
     SET(DDRD, PD7);
+    ADMUX = (1<<REFS0) | (1<<ADLAR); //ref = avcc, left adjust result
+    ADCSRA = (1<<ADEN) | (1<<ADSC) | 7; //turn on adc, prescale 128 -> 6.4 us conversion t
+    DIDR0 = (1<<ADC0D); //digital input disabled for adc0 
     TCCR0B = 5; //prescale TC0 1024, 20 MHz -> 50 ns * 1024 * 255 = 13.056 ms
+    reportBuffer[0] = 0x00;//(1<<1);
     while(1){
         usbPoll();
         wdt_reset();
         if(CHK(TIFR0, TOV0)){
             TIFR0 = 1<<TOV0;
             TCNT0 = 0;
+            //check button states
             if(CHK(PINB, PB0) && changed == 0){
                 keydown = 1;
-                if (prev == keydown) changed = 0;
+                SET(reportBuffer[0], NEXT_TRACK);
+                if (prev == keydown) {}
                 else changed = 1;
                 prev = 1;
             }else{
                 keydown = 0;
-                if (prev == keydown) changed =0;
+                CLR(reportBuffer[0], NEXT_TRACK);
+                if (prev == keydown) {}
                 else changed = 1;
                 prev = 0;
+            }
+            //check adc
+            if(CHK(ADCSRA, ADIF)){
+                // normalizer = ADCH * MAX_VOLUME;
+                // adc_result = normalizer / 255;
+                adc_result = (ADCH >> 2);
+                SET(ADCSRA, ADIF);
+                SET(ADCSRA, ADSC);
+                if(adc_result-1 > volume){
+                    SET(reportBuffer[0], VOLUME_UP);
+                    CLR(reportBuffer[0], VOLUME_DOWN);
+                    volume++;
+                    changed = 1;
+                }else if (adc_result+1 < volume){
+                    CLR(reportBuffer[0], VOLUME_UP);
+                    SET(reportBuffer[0], VOLUME_DOWN);
+                    volume--;
+                    changed = 1;
+                }else{
+                    CLR(reportBuffer[0], VOLUME_UP);
+                    CLR(reportBuffer[0], VOLUME_DOWN);
+                }
             }
         }
         if(changed){
             changed = 0;
             TIFR0 = 1<<TOV0;
             TCNT0 = 0;
-            if(keydown){
-                reportBuffer[0] = 0x04;
-            }else{
-                reportBuffer[0] = 0x00;
-            }
             TOG(PORTD, PD7);
             wdt_reset();
             usbSetInterrupt(reportBuffer, sizeof(reportBuffer));

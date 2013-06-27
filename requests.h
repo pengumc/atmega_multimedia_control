@@ -16,6 +16,6 @@
 #ifndef __REQUESTS_H_INCLUDED__
 #define __REQUESTS_H_INCLUDED__
 
-#define CUSTOM_RQ_EXAMPLE   1
+#define USBRQ_GET_LAST_ADC_RESULT 0x11
 
 #endif /* __REQUESTS_H_INCLUDED__ */
