@@ -24,12 +24,21 @@
 #define PREV_TRACK 3
 #define PAUSE_TRACK 4
 #define MAX_VOLUME 64
+#define BUTTONPORT PINB
+#define BUTTON_PREV PB1
+#define BUTTON_PAUSE PB2
+#define BUTTON_NEXT PB3
+
 
 static uchar    reportBuffer[1];    /* buffer for HID reports */
 static uchar    idleRate;           /* in 4 ms units */
 static uchar    msgBuffer;
-uchar keydown = 0;
-uchar prev = 0;
+
+static uchar button_states = 0;
+#define STATE_NEXT 0
+#define STATE_PREV 2
+#define STATE_PAUSE 4
+
 uchar changed = 0;
 uchar adc_result = 0;
 uchar volume = MAX_VOLUME;
@@ -45,7 +54,7 @@ const PROGMEM char usbHidReportDescriptor[31] = {   /* USB report descriptor */
         0x09, 0xEA, //Usage (Volume Down)
         0x09, 0xb5, //Usage (scan Next Track)
         0x09, 0xb6, //Usage (scan Previous Track)
-        0x09, 0xb1, //Usage (pause)
+        0x09, 0xcd, //Usage (media play/pause) ?undocumented?
         0x75, 0x01, //Report Size (1)
         0x95, 0x05, //Report Count (5)
         0x81, 0x06, //Input (Data, Variable, rel)
@@ -95,8 +104,7 @@ int main(){
     usbDeviceConnect();
     sei();
     //setup ports, timers, and init variables.
-    CLR(DDRB, PB0);
-    SET(DDRD, PD7);
+    SET(DDRD, PD7);//led
     ADMUX = (1<<REFS0) | (1<<ADLAR); //ref = avcc, left adjust result
     ADCSRA = (1<<ADEN) | (1<<ADSC) | 7; //turn on adc, prescale 128 -> 6.4 us conversion t
     DIDR0 = (1<<ADC0D); //digital input disabled for adc0 
@@ -109,19 +117,66 @@ int main(){
             TIFR0 = 1<<TOV0;
             TCNT0 = 0;
             //check button states
-            if(CHK(PINB, PB0) && changed == 0){
-                keydown = 1;
-                SET(reportBuffer[0], NEXT_TRACK);
-                if (prev == keydown) {}
-                else changed = 1;
-                prev = 1;
-            }else{
-                keydown = 0;
-                CLR(reportBuffer[0], NEXT_TRACK);
-                if (prev == keydown) {}
-                else changed = 1;
-                prev = 0;
+            if(CHK(BUTTONPORT, BUTTON_NEXT)){           //if it's down
+                SET(button_states, STATE_NEXT);         //set current state to down
+                if(CHK(button_states, (STATE_NEXT+1))){   //if previous state was down
+                                                        //  do nothing
+                }else{                                  //else
+                    SET(reportBuffer[0], NEXT_TRACK);  //send down state
+                    SET(button_states, (STATE_NEXT+1));     //update previous state
+                    changed = 1;
+                }
+            }else{                                      //button is up
+                CLR(button_states, STATE_NEXT);          //set current state to up
+                if(CHK(button_states, (STATE_NEXT+1))){   //if previous was down
+                    CLR(reportBuffer[0], NEXT_TRACK);  //send up state
+                    CLR(button_states, (STATE_NEXT+1));     //update previous state
+                    changed = 1;
+                }else{
+                                                        //do nothing
+                }
             }
+            // PREVIOUS
+            if(CHK(BUTTONPORT, BUTTON_PREV)){         
+                SET(button_states, STATE_PREV);       
+                if(CHK(button_states, (STATE_PREV+1))){ 
+                                                      
+                }else{                                
+                    SET(reportBuffer[0], PREV_TRACK);
+                    SET(button_states, (STATE_PREV+1)); 
+                    changed = 1;
+                }
+            }else{                                    
+                CLR(button_states, STATE_PREV);       
+                if(CHK(button_states, (STATE_PREV+1))){ 
+                    CLR(reportBuffer[0], PREV_TRACK);
+                    CLR(button_states, (STATE_PREV+1)); 
+                    changed = 1;
+                }else{
+                                                      
+                }
+            }
+            // PAUSE
+            if(CHK(BUTTONPORT, BUTTON_PAUSE)){         
+                SET(button_states, STATE_PAUSE);       
+                if(CHK(button_states, (STATE_PAUSE+1))){ 
+                                                      
+                }else{                                
+                    SET(reportBuffer[0], PAUSE_TRACK);
+                    SET(button_states, (STATE_PAUSE+1)); 
+                    changed = 1;
+                }
+            }else{                                    
+                CLR(button_states, STATE_PAUSE);       
+                if(CHK(button_states, (STATE_PAUSE+1))){ 
+                    CLR(reportBuffer[0], PAUSE_TRACK);
+                    CLR(button_states, (STATE_PAUSE+1)); 
+                    changed = 1;
+                }else{
+                                                      
+                }
+            }
+            
             //check adc
             if(CHK(ADCSRA, ADIF)){
                 // normalizer = ADCH * MAX_VOLUME;
@@ -154,5 +209,5 @@ int main(){
             usbSetInterrupt(reportBuffer, sizeof(reportBuffer));
             reportBuffer[0] = 0x00;
         }
-    }
-}
+    } //while
+} //main
