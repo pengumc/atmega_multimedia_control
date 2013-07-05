@@ -117,23 +117,24 @@ int main(){
             TIFR0 = 1<<TOV0;
             TCNT0 = 0;
             //check button states
+            //NEXT 
             if(CHK(BUTTONPORT, BUTTON_NEXT)){           //if it's down
                 SET(button_states, STATE_NEXT);         //set current state to down
-                if(CHK(button_states, (STATE_NEXT+1))){   //if previous state was down
+                if(CHK(button_states, (STATE_NEXT+1))){ //if previous state was down
                                                         //  do nothing
                 }else{                                  //else
-                    SET(reportBuffer[0], NEXT_TRACK);  //send down state
-                    SET(button_states, (STATE_NEXT+1));     //update previous state
+                    SET(reportBuffer[0], NEXT_TRACK);   //  send down state
+                    SET(button_states, (STATE_NEXT+1)); //  update previous state
                     changed = 1;
                 }
             }else{                                      //button is up
-                CLR(button_states, STATE_NEXT);          //set current state to up
-                if(CHK(button_states, (STATE_NEXT+1))){   //if previous was down
-                    CLR(reportBuffer[0], NEXT_TRACK);  //send up state
-                    CLR(button_states, (STATE_NEXT+1));     //update previous state
+                CLR(button_states, STATE_NEXT);         //set current state to up
+                if(CHK(button_states, (STATE_NEXT+1))){ //if previous was down
+                    CLR(reportBuffer[0], NEXT_TRACK);   //  send up state
+                    CLR(button_states, (STATE_NEXT+1)); //  update previous state
                     changed = 1;
-                }else{
-                                                        //do nothing
+                }else{                                  //if button already was up
+                                                        //  do nothing
                 }
             }
             // PREVIOUS
@@ -176,7 +177,6 @@ int main(){
                                                       
                 }
             }
-            
             //check adc
             if(CHK(ADCSRA, ADIF)){
                 // normalizer = ADCH * MAX_VOLUME;
