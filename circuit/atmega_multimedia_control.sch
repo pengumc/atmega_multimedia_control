@@ -8384,9 +8384,9 @@ Source: www.kingbright.com</description>
 <sheets>
 <sheet>
 <plain>
-<text x="127" y="38.1" size="1.778" layer="91">button 1</text>
-<text x="142.24" y="35.56" size="1.778" layer="91">button 2</text>
-<text x="157.48" y="33.02" size="1.778" layer="91">button 3</text>
+<text x="119.38" y="38.1" size="1.778" layer="91">button 1</text>
+<text x="132.08" y="38.1" size="1.778" layer="91">button 2</text>
+<text x="147.32" y="38.1" size="1.778" layer="91">button 3</text>
 <text x="88.9" y="78.74" size="1.778" layer="91">volume knob</text>
 </plain>
 <instances>
@@ -8582,6 +8582,8 @@ Source: www.kingbright.com</description>
 <pinref part="IC1" gate="G$1" pin="PB1(OC1A)"/>
 <pinref part="R5" gate="G$1" pin="1"/>
 <wire x1="81.28" y1="30.48" x2="119.38" y2="30.48" width="0.1524" layer="91"/>
+<wire x1="119.38" y1="30.48" x2="119.38" y2="35.56" width="0.1524" layer="91"/>
+<junction x="119.38" y="30.48"/>
 </segment>
 </net>
 <net name="N$10" class="0">
@@ -8589,7 +8591,6 @@ Source: www.kingbright.com</description>
 <pinref part="R5" gate="G$1" pin="2"/>
 <pinref part="LED1" gate="G$1" pin="A"/>
 <wire x1="129.54" y1="30.48" x2="129.54" y2="20.32" width="0.1524" layer="91"/>
-<wire x1="129.54" y1="30.48" x2="129.54" y2="35.56" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$11" class="0">
@@ -8597,6 +8598,8 @@ Source: www.kingbright.com</description>
 <pinref part="IC1" gate="G$1" pin="PB2(SS/OC1B)"/>
 <pinref part="R6" gate="G$1" pin="1"/>
 <wire x1="81.28" y1="27.94" x2="134.62" y2="27.94" width="0.1524" layer="91"/>
+<wire x1="134.62" y1="27.94" x2="134.62" y2="35.56" width="0.1524" layer="91"/>
+<junction x="134.62" y="27.94"/>
 </segment>
 </net>
 <net name="N$12" class="0">
@@ -8604,7 +8607,6 @@ Source: www.kingbright.com</description>
 <pinref part="R6" gate="G$1" pin="2"/>
 <pinref part="LED2" gate="G$1" pin="A"/>
 <wire x1="144.78" y1="27.94" x2="144.78" y2="20.32" width="0.1524" layer="91"/>
-<wire x1="144.78" y1="27.94" x2="144.78" y2="33.02" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$13" class="0">
@@ -8612,6 +8614,8 @@ Source: www.kingbright.com</description>
 <pinref part="IC1" gate="G$1" pin="PB3(MOSI/OC2)"/>
 <pinref part="R7" gate="G$1" pin="1"/>
 <wire x1="81.28" y1="25.4" x2="149.86" y2="25.4" width="0.1524" layer="91"/>
+<wire x1="149.86" y1="25.4" x2="149.86" y2="35.56" width="0.1524" layer="91"/>
+<junction x="149.86" y="25.4"/>
 </segment>
 </net>
 <net name="N$14" class="0">
@@ -8619,7 +8623,6 @@ Source: www.kingbright.com</description>
 <pinref part="R7" gate="G$1" pin="2"/>
 <pinref part="LED3" gate="G$1" pin="A"/>
 <wire x1="160.02" y1="25.4" x2="160.02" y2="20.32" width="0.1524" layer="91"/>
-<wire x1="160.02" y1="25.4" x2="160.02" y2="30.48" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$15" class="0">
@@ -8639,7 +8642,8 @@ Source: www.kingbright.com</description>
 <wire x1="12.7" y1="68.58" x2="12.7" y2="78.74" width="0.1524" layer="91"/>
 <wire x1="33.02" y1="68.58" x2="12.7" y2="68.58" width="0.1524" layer="91"/>
 <pinref part="X1" gate="G$1" pin="1"/>
-<wire x1="116.84" y1="5.08" x2="116.84" y2="58.42" width="0.1524" layer="91"/>
+<wire x1="116.84" y1="5.08" x2="116.84" y2="45.72" width="0.1524" layer="91"/>
+<wire x1="116.84" y1="45.72" x2="116.84" y2="58.42" width="0.1524" layer="91"/>
 <wire x1="116.84" y1="58.42" x2="116.84" y2="86.36" width="0.1524" layer="91"/>
 <wire x1="116.84" y1="86.36" x2="86.36" y2="86.36" width="0.1524" layer="91"/>
 <junction x="12.7" y="86.36"/>
@@ -8659,6 +8663,14 @@ Source: www.kingbright.com</description>
 <pinref part="R8" gate="G$1" pin="2"/>
 <wire x1="12.7" y1="43.18" x2="12.7" y2="33.02" width="0.1524" layer="91"/>
 <label x="12.7" y="88.9" size="1.778" layer="95"/>
+<wire x1="149.86" y1="45.72" x2="149.86" y2="43.18" width="0.1524" layer="91"/>
+<wire x1="134.62" y1="45.72" x2="134.62" y2="43.18" width="0.1524" layer="91"/>
+<wire x1="134.62" y1="45.72" x2="149.86" y2="45.72" width="0.1524" layer="91"/>
+<junction x="134.62" y="45.72"/>
+<wire x1="119.38" y1="45.72" x2="134.62" y2="45.72" width="0.1524" layer="91"/>
+<wire x1="119.38" y1="43.18" x2="119.38" y2="45.72" width="0.1524" layer="91"/>
+<wire x1="116.84" y1="45.72" x2="119.38" y2="45.72" width="0.1524" layer="91"/>
+<junction x="116.84" y="45.72"/>
 </segment>
 </net>
 </nets>

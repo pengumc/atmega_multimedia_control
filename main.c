@@ -1,3 +1,4 @@
+//TODO: status led is on PC5 now, switch fwd and bkwd
 //MCU = atmega88
 //F_CPU = 20000000 defined in makefile
 //hfuse: DF 
