@@ -223,3 +223,4 @@ usbdrv
 *.b#*
 *.dll
 *.exe
+*_wip.*
