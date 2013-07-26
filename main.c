@@ -191,11 +191,11 @@ int main(){
                     first_adc = 0;
                 }else{
                     if(changed == 0){
-                        if(adc_result+1 > volume){ //reversed because soldering.
+                        if(adc_result > volume){ //reversed because soldering.
                             SET(reportBuffer[0], VOLUME_DOWN);
                             if(volume < MAX_VOLUME) volume++;
                             changed = 1;
-                        }else if (adc_result+1 < volume){
+                        }else if (adc_result < volume){
                             SET(reportBuffer[0], VOLUME_UP);
                             if(volume > 0) volume--;
                             changed = 1;
@@ -210,7 +210,9 @@ int main(){
             TCNT0 = 0;
             wdt_reset();
             usbSetInterrupt(reportBuffer, sizeof(reportBuffer));
+            while(!usbInterruptIsReady()){}
             reportBuffer[0] = 0x00;
+            usbSetInterrupt(reportBuffer, sizeof(reportBuffer));
         }
     } //while
 } //main
