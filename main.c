@@ -1,4 +1,7 @@
-//TODO: status led is on PC5 now, switch fwd and bkwd
+//atmega multimedia controller
+//Author: Michiel van der Coelen (michiel.van.der.coelen@gmail.com)
+//Date: 2013-07-31
+
 //MCU = atmega88
 //F_CPU = 20000000 defined in makefile
 //hfuse: DF 
