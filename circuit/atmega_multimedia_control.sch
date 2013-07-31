@@ -8413,8 +8413,7 @@ Source: www.kingbright.com</description>
 <instance part="R2" gate="G$1" x="104.14" y="45.72" rot="R180"/>
 <instance part="R3" gate="G$1" x="96.52" y="50.8" rot="R180"/>
 <instance part="Q1" gate="G$1" x="25.4" y="58.42" smashed="yes" rot="R90">
-<attribute name="NAME" x="30.48" y="59.944" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="33.02" y="63.5" size="1.778" layer="96" rot="R180"/>
+<attribute name="VALUE" x="33.02" y="66.04" size="1.778" layer="96" rot="R180"/>
 </instance>
 <instance part="R4" gate="G$1" x="109.22" y="58.42"/>
 <instance part="C3" gate="G$1" x="5.08" y="78.74" smashed="yes" rot="R180">
